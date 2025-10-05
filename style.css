@@ -1,0 +1,150 @@
+/* Main website font */
+* {
+    font-family: "Playwrite US Modern", cursive;
+    box-sizing: border-box;
+}
+
+/* Body style */
+body {
+    background-color: black;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Evernight webm file styling */
+video {
+    width: auto;
+    height: 50vh;
+    margin-top: 3vh;
+}
+
+/* Song select title */
+#song-sel-title {
+    font-size: 4rem;
+    text-align: center;
+    margin-top: 5vh;
+}
+
+/* File upload container */
+.file-upload {
+    display: inline-flex;
+    align-items: center;
+    border: 3px dashed #bbb;
+    background-color: gray;
+    border-radius: 5rem;
+    padding: 10px;
+    color: white;
+    transition: all 0.4s ease;
+}
+
+/* Label (upload button) */
+.file-upload label {
+    background-color: rgb(123, 88, 122);
+    border-radius: 2em;
+    padding: 0.8vmin 1.6vmin;
+    cursor: pointer;
+}
+
+.file-upload label:hover {
+    background-color: rgb(143, 108, 142);
+    transition: background-color 0.25s ease;
+}
+
+/* Filename text */
+.file-upload #fileName {
+    white-space: nowrap;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+/* Hide native input */
+.file-upload input[type="file"] {
+    display: none;
+}
+
+/* Landscape-only adjustments */
+@media (orientation: landscape) {
+    body {
+        flex-direction: column;
+    }
+}
+
+/* Optional: handle small landscape devices */
+@media (orientation: landscape) and (max-height: 500px) {
+    video {
+        width: auto;
+        height: 50vh;
+    }
+
+    #song-sel-title {
+        font-size: 1.5rem;
+    }
+
+    .file-upload {
+        font-size: 2vmin;
+        padding: 1vmin 3vmin;
+    }
+}
+
+/* Rotation message handling */
+/* Fullscreen overlay */
+.overlay {
+    position: fixed;
+    inset: 0; /* shorthand for top:0; right:0; bottom:0; left:0 */
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(200px);
+    display: flex; /* Flexbox will center contents */
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    text-align: center;
+    padding: 1rem;
+}
+
+/* Phone image or icon */
+.phone {
+    width: min(40%, 250px); /* responsive scaling: max width is 250px */
+    height: auto;
+}
+
+/* Message text */
+.message {
+    top: 50px;
+    color: white;
+    font-style: italic;
+    font-weight: bold;
+    font-size: clamp(1.2rem, 4vw, 2.5rem); /* responsive text size */
+}
+
+/* Phone and message opacity animation */
+.phone, .message{
+    animation-name: message-transparency;
+    animation-duration: 1s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+@keyframes message-transparency {
+    0%{
+        opacity: 100%;
+    }
+    100%{
+        opacity: 10%;
+    }
+}
+
+/* Hide everything in landscape */
+@media only screen and (orientation: landscape) {
+    .overlay {
+        display: none;
+    }
+}

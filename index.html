@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evernight Dancin'</title>
+    <link rel="icon" href="icons/evernight_fav.ico">
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Delius&family=Playwrite+US+Modern:wght@100..400&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <!-- Elements used for the website -->
+    <p id="song-sel-title">Select a song for Evernight</p>
+    <div class="file-upload">
+        <label for="audioFile">Select file</label>
+        <span id="fileName">No files selected</span>
+        <input type="file" id="audioFile" accept="audio/*">
+    </div>
+    <video id="bgVideo" src="assets/evernight-march-7th.webm" loop></video>
+
+    <!-- Device rotate message-->
+    <div class="overlay">
+        <img draggable="false" class="phone" src="./icons/device_orientation.png" alt="Device orientation icon">
+        <div class="message">Please rotate your device!</div>
+    </div>
+
+    <!-- 
+        Here is where events such as play the animation and change background colors are managed.
+        I didn't move it to a separate script because it breaks everything down If I do.
+        So for now, it will stay that way. In the future, I will separate it to make it more understandable and readable.
+    -->
+    <script>
+        const vid = document.getElementById("bgVideo");
+        let audioContext, sourceNode, gainNode, intervalId;
+
+        document.getElementById("audioFile").addEventListener("change", async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            // Stop previous animation
+            if (intervalId) clearInterval(intervalId);
+            intervalId = null;
+            document.body.style.backgroundColor = "black";
+
+            // Fade out previous audio
+            if (sourceNode) {
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+                sourceNode.stop(audioContext.currentTime + 0.5);
+            }
+
+            if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+            const arrayBuffer = await file.arrayBuffer();
+            const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+
+            // Create source and gain node (this is for fading effect)
+            sourceNode = audioContext.createBufferSource();
+            sourceNode.buffer = audioBuffer;
+            gainNode = audioContext.createGain();
+            gainNode.gain.setValueAtTime(0.01, audioContext.currentTime);
+            sourceNode.connect(gainNode).connect(audioContext.destination);
+            sourceNode.start();
+            gainNode.gain.exponentialRampToValueAtTime(1, audioContext.currentTime + 1);
+
+            // Reset video
+            vid.pause();
+            vid.currentTime = 0;
+
+            // Detect first strong beat
+            const firstBeatTime = detectFirstStrongBeat(audioBuffer.getChannelData(0), audioBuffer.sampleRate);
+
+            // Schedule animation at first beat
+            const delay = firstBeatTime * 1000;
+            setTimeout(() => {
+                let isBlack = true;
+                vid.play();
+                intervalId = setInterval(() => {
+                    document.body.style.backgroundColor = isBlack ? "rgb(123, 88, 122)" : "black";
+                    isBlack = !isBlack;
+                }, 500); // 1000ms = 1s; 500ms = 0.5s
+
+                // Stop animation when audio ends
+                sourceNode.onended = () => {
+                    clearInterval(intervalId);
+                    intervalId = null;
+                    vid.pause();
+                    vid.currentTime = 0;
+                    document.body.style.backgroundColor = "black";
+                };
+            }, delay);
+        });
+
+        // Energy-based first beat detection
+        function detectFirstStrongBeat(channelData, sampleRate) {
+            const frameSize = 2048;
+            const hopSize = 512;
+            let energies = [];
+
+            for (let i = 0; i < channelData.length - frameSize; i += hopSize) {
+                let sum = 0;
+                for (let j = 0; j < frameSize; j++) {
+                    sum += channelData[i + j] ** 2;
+                }
+                energies.push(sum / frameSize);
+            }
+
+            const maxEnergy = Math.max(...energies);
+            const threshold = maxEnergy * 0.6;
+
+            for (let i = 0; i < energies.length; i++) {
+                if (energies[i] >= threshold) {
+                    return (i * hopSize) / sampleRate;
+                }
+            }
+
+            return 0;
+        }
+
+        // Update input
+        const input = document.getElementById("audioFile");
+        const fileName = document.getElementById("fileName");
+
+        input.addEventListener("change", () => {
+            fileName.textContent = input.files.length
+                ? input.files[0].name
+                : "No files selected";
+        });
+    </script>
+</body>
+</html>
