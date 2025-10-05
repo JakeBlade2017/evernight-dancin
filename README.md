@@ -24,3 +24,8 @@ There are still things left to do, such as:
 - Improve synchronization with music beats
 
 You can write suggestions in the issues tab. If you liked it, don't forget to click on the star ⭐
+
+## Thank you
+<div align="center">
+	<img src="https://raw.githubusercontent.com/JakeBlade2017/evernight-dancin/refs/heads/main/assets/evernight-march-7th.webp" alt="Evernight dancin' animation" />
+</div>
