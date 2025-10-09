@@ -15,7 +15,7 @@ git clone https://github.com/JakeBlade2017/evernight-dancin.git
 3. Have fun!
 
 ### Web
-_Coming soon a github page_
+[Evernight Dancin' website here! (Hosted on GitHub pages) ✨](https://jakeblade2017.github.io/evernight-dancin/)
 
 ## To do
 There are still things left to do, such as:
