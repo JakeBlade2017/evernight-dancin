@@ -19,8 +19,6 @@ git clone https://github.com/JakeBlade2017/evernight-dancin.git
 
 ## To do
 There are still things left to do, such as:
-- Restructure the code
-- Add audio controls
 - Improve synchronization with music beats
 
 You can write suggestions in the issues tab. If you liked it, don't forget to click on the star ⭐
